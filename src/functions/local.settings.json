@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_EXTENSION_VERSION": "~3",
+    "TEXT_ANALYSIS_KEY": "<this is the key that will be used to call the sentiment API>",
+    "RECEIPTS_STORAGE_CONNECTION": "",
+    "SB_CONNECTION_STRING": "<sb connection for topics and queues>",
+    "EVENTHUB_CONNECTION_STRING": "<event hub connection>",
+    "COSMOS_CONNECTION_STRING": "<connection to the cosmos db>",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "<storage connection for functions to function :) >",
+  },
+  "ConnectionStrings": {}
+}

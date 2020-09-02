@@ -1,0 +1,58 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP": {
+                "inputs": {
+                    "method": "GET",
+                    "queries": {
+                        "code": "eej/kC92V46AAwMIVtgZpIkD7YQ66Uuj08N0GOZ2KQIDaFEXbG/3zA==",
+                        "productId": "@triggerBody()?['productId']"
+                    },
+                    "uri": "https://bfyoc-functions-24.azurewebsites.net/api/products"
+                },
+                "runAfter": {},
+                "type": "Http"
+            },
+            "Response": {
+                "inputs": {
+                    "body": "@{body('HTTP')} and the description is This starfruit ice cream is out of this world!",
+                    "statusCode": 200
+                },
+                "kind": "Http",
+                "runAfter": {
+                    "HTTP": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Response"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "productId": {
+                "defaultValue": "null",
+                "type": "String"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "method": "POST",
+                    "schema": {
+                        "properties": {
+                            "productId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}

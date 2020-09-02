@@ -1,0 +1,6 @@
+requests 
+| where url contains "https://bfyoc-functionapp-1.azurewebsites.net"
+| where timestamp > ago(1h)
+| summarize RequestTime = avg(duration), TotalRequests = count() by name
+| sort by TotalRequests
+| project FunctionName = name, RequestTime, TotalRequests

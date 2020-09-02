@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroups": {
+            "type": "array"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('resourceGroups')[copyIndex()].name, '-', parameters('resourceGroups')[copyIndex()].suffix)]",
+            "location": "[parameters('resourceGroups')[copyIndex()].location]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "tags": {},
+            "properties": {
+            },
+            "copy": {
+                "name": "webappcopy",
+                "count": "[length(parameters('resourceGroups'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}

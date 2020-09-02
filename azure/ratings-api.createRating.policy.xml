@@ -1,0 +1,22 @@
+<policies>
+    <inbound>
+        <set-variable name="isNotMobile" value="@(!context.Product.Id.Equals("mobile"))" />
+        <base />
+        <choose>
+            <when condition="@(context.Variables.GetValueOrDefault<bool>("isNotMobile"))">
+                <return-response>
+                    <set-status code="401" reason="Unauthorized" />
+                </return-response>
+            </when>
+        </choose>
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

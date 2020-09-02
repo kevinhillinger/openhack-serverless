@@ -1,0 +1,252 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Add_Internal_User_Email_Address": {
+                "inputs": {
+                    "name": "emailAddresses",
+                    "value": "youremail.address@yourdomain.com"
+                },
+                "runAfter": {
+                    "For_each": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "AppendToArrayVariable"
+            },
+            "Build_HTML_Rows": {
+                "actions": {
+                    "Append_to_array_variable": {
+                        "inputs": {
+                            "name": "htmlProductRows",
+                            "value": "<tr>\n <td>@{items('Build_HTML_Rows')['productName']}</td>\n <td>@{items('Build_HTML_Rows')['productDescription']}</td>\n <td>@{items('Build_HTML_Rows')['productId']}</td>\n</tr>"
+                        },
+                        "runAfter": {},
+                        "type": "AppendToArrayVariable"
+                    }
+                },
+                "foreach": "@variables('products')",
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Create_HTML_Body": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "htmlTemplate",
+                            "type": "string",
+                            "value": "@{replace(body('Get_HTML_Template'), '<!-- LOOP THROUGH EACH PRODUCT HERE AND CREATE A TABLE ROW ENTRY FOR EACH -->', join(variables('htmlProductRows'), '\n'))}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Get_HTML_Template": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "For_each": {
+                "actions": {
+                    "Append_to_array_variable_2": {
+                        "inputs": {
+                            "name": "emailAddresses",
+                            "value": "@items('For_each')?['emailaddress1']"
+                        },
+                        "runAfter": {},
+                        "type": "AppendToArrayVariable"
+                    }
+                },
+                "foreach": "@body('List_records')?['value']",
+                "runAfter": {
+                    "List_records": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Foreach_Email_Address": {
+                "actions": {
+                    "Send_an_email_(V2)": {
+                        "inputs": {
+                            "body": {
+                                "Body": "<p>@{variables('htmlTemplate')}</p>",
+                                "Subject": "BFYOC 24",
+                                "To": "@{items('Foreach_Email_Address')}"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['office365']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/v2/Mail"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@variables('emailAddresses')",
+                "runAfter": {
+                    "Add_Internal_User_Email_Address": [
+                        "Succeeded"
+                    ],
+                    "Create_HTML_Body": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Get_HTML_Template": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/files/@{encodeURIComponent(encodeURIComponent('JTJmZW1haWwtdGVtcGxhdGVzJTJmcHJvZHVjdC5ub3RpZnkudG1wbC5odG1s'))}/content",
+                    "queries": {
+                        "inferContentType": true
+                    }
+                },
+                "metadata": {
+                    "JTJmZW1haWwtdGVtcGxhdGVzJTJmcHJvZHVjdC5ub3RpZnkudG1wbC5odG1s": "/email-templates/product.notify.tmpl.html"
+                },
+                "runAfter": {
+                    "Build_HTML_Rows": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "HTTP": {
+                "inputs": {
+                    "headers": {
+                        "Ocp-Apim-Subscription-Key": "@{triggerOutputs()['headers']?['Ocp-Apim-Subscription-Key']}"
+                    },
+                    "method": "GET",
+                    "uri": "https://bfyoc-apim-1.azure-api.net/api/product/"
+                },
+                "runAfter": {},
+                "type": "Http"
+            },
+            "Initialize_Email_Addresses": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "emailAddresses",
+                            "type": "array"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Initialize_Products": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "products",
+                            "type": "array",
+                            "value": "@body('HTTP')"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "HTTP": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "htmlProductRows",
+                            "type": "array",
+                            "value": []
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Products": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "List_records": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('org01c23854.crm'))}/tables/@{encodeURIComponent(encodeURIComponent('contacts'))}/items"
+                },
+                "runAfter": {
+                    "Initialize_Email_Addresses": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "conditions": [],
+                "inputs": {
+                    "method": "POST",
+                    "relativePath": "/api/product",
+                    "schema": {
+                        "properties": {
+                            "notify": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "operationOptions": "EnableSchemaValidation",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureblob": {
+                    "connectionId": "/subscriptions/<subscriptionid>/resourceGroups/oh-challenger-24-1/providers/Microsoft.Web/connections/azureblob",
+                    "connectionName": "azureblob",
+                    "id": "/subscriptions/<subscriptionid>/providers/Microsoft.Web/locations/eastus2/managedApis/azureblob"
+                },
+                "commondataservice": {
+                    "connectionId": "/subscriptions/<subscriptionid>/resourceGroups/oh-challenger-24-1/providers/Microsoft.Web/connections/commondataservice",
+                    "connectionName": "commondataservice",
+                    "id": "/subscriptions/<subscriptionid>/providers/Microsoft.Web/locations/eastus2/managedApis/commondataservice"
+                },
+                "office365": {
+                    "connectionId": "/subscriptions/<subscriptionid>/resourceGroups/oh-challenger-24-1/providers/Microsoft.Web/connections/office365",
+                    "connectionName": "office365",
+                    "id": "/subscriptions/<subscriptionid>/providers/Microsoft.Web/locations/eastus2/managedApis/office365"
+                }
+            }
+        }
+    }
+}

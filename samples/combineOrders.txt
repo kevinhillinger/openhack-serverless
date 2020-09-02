@@ -1,0 +1,9 @@
+
+POST
+https://serverlessohmanagementapi.trafficmanager.net/api/definition/order/combineOrderContent
+
+{
+  "orderHeaderDetailsCSVUrl": "https://bfyocbatchstore1.blob.core.windows.net/orders/20200817214000-OrderHeaderDetails.csv",
+  "orderLineItemsCSVUrl": "https://bfyocbatchstore1.blob.core.windows.net/orders/20200817214000-OrderLineItems.csv",
+  "productInformationCSVUrl": "https://bfyocbatchstore1.blob.core.windows.net/orders/20200817214000-ProductInformation.csv"
+}

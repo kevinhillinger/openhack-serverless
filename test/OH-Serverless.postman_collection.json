@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "f763e691-bb1c-4db9-9d2a-1d5b2ae1fb5e",
+		"name": "OH-Serverless",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "BFYOC Logic App",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"productId\": \"103c9acc-cea5-4faa-99ab-fae98ecd3131\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://prod-18.eastus2.logic.azure.com:443/workflows/637bf76f2a194f0e9d82b8efeb62c3eb/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3xpcbjr_ubrpw7m4NUMQaROfdKP274fBMOSbXXETkKI",
+					"protocol": "https",
+					"host": [
+						"prod-18",
+						"eastus2",
+						"logic",
+						"azure",
+						"com"
+					],
+					"port": "443",
+					"path": [
+						"workflows",
+						"637bf76f2a194f0e9d82b8efeb62c3eb",
+						"triggers",
+						"manual",
+						"paths",
+						"invoke"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2016-10-01"
+						},
+						{
+							"key": "sp",
+							"value": "%2Ftriggers%2Fmanual%2Frun"
+						},
+						{
+							"key": "sv",
+							"value": "1.0"
+						},
+						{
+							"key": "sig",
+							"value": "3xpcbjr_ubrpw7m4NUMQaROfdKP274fBMOSbXXETkKI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Func - QS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://bfyoc-functions-24.azurewebsites.net/api/products/?productId=103c9acc-cea5-4faa-99ab-fae98ecd3131&code=eej/kC92V46AAwMIVtgZpIkD7YQ66Uuj08N0GOZ2KQIDaFEXbG/3zA==",
+					"protocol": "https",
+					"host": [
+						"bfyoc-functions-24",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"products",
+						""
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "103c9acc-cea5-4faa-99ab-fae98ecd3131"
+						},
+						{
+							"key": "code",
+							"value": "eej/kC92V46AAwMIVtgZpIkD7YQ66Uuj08N0GOZ2KQIDaFEXbG/3zA=="
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Func - Route",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://bfyoc-functions-24.azurewebsites.net/api/products/103c9acc-cea5-4faa-99ab-fae98ecd3131/?code=eej/kC92V46AAwMIVtgZpIkD7YQ66Uuj08N0GOZ2KQIDaFEXbG/3zA==",
+					"protocol": "https",
+					"host": [
+						"bfyoc-functions-24",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"products",
+						"103c9acc-cea5-4faa-99ab-fae98ecd3131",
+						""
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "eej/kC92V46AAwMIVtgZpIkD7YQ66Uuj08N0GOZ2KQIDaFEXbG/3zA=="
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Rating (By Product ID)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://bfyoc-functionapp-1.azurewebsites.net/api/rating/e5c11ee8-d0c6-89a9-8f0b-414885906c89?code=vvRV84Ezp61I5vMH/Ga0p49qUZT0iJmyMmzPp9WtDpNYuGlsfzu/Iw==",
+					"protocol": "https",
+					"host": [
+						"bfyoc-functionapp-1",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"rating",
+						"e5c11ee8-d0c6-89a9-8f0b-414885906c89"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "vvRV84Ezp61I5vMH/Ga0p49qUZT0iJmyMmzPp9WtDpNYuGlsfzu/Iw=="
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

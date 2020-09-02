@@ -1,0 +1,10 @@
+let traceId = 'rating score| ';
+traces
+| where operation_Name == 'createRating' and message contains traceId
+| where timestamp > ago(5m)
+| extend sentiment = parse_json(substring(message, strlen(traceId)))
+| extend sentimentScore = todouble(sentiment.score)
+| extend ratingId = sentiment.ratingId
+| where todouble(sentiment.score) <= 0.3
+| summarize AggregatedValue = count() by bin(timestamp, 5m)
+| order by timestamp desc

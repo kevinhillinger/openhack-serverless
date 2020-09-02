@@ -1,0 +1,43 @@
+
+# For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
+# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
+
+name: Common FunctionApp
+on: push
+
+env:
+  AZURE_FUNCTIONAPP_NAME: bfyoc-functionapp-1    # set this to your application's name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './dist'      # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '12.x'                     # set this to the node version to use (supports 8.x, 10.x, 12.x)
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: 'Login to Azure'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_FUNCTIONAPP_CREDENTIALS }}
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: install azure core tools
+      run: 
+        npm i -g azure-functions-core-tools@3 --unsafe-perm true
+    - name: npm install, build, and test
+      run: |
+        npm install
+        npm run build:production
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/
+    - name: deploy to azure functions
+      run: |
+        cp -r ./node_modules ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/
+        cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/
+        func azure functionapp publish ${{ env.AZURE_FUNCTIONAPP_NAME }}
+    

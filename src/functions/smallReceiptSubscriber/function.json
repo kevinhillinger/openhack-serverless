@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "name": "message",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "topicName": "receiptReceived",
+      "subscriptionName": "receiptReceived.small",
+      "connection": "SB_CONNECTION_STRING"
+    },
+    {
+      "name": "outputBlob",
+      "type": "blob",
+      "path": "receipts/{salesNumber}-{DateTime}.json",
+      "connection": "RECEIPTS_STORAGE_CONNECTION",
+      "direction": "out"
+    }
+  ]
+}
